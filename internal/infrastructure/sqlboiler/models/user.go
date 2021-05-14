@@ -66,13 +66,16 @@ var UserWhere = struct {
 
 // UserRels is where relationship names are stored.
 var UserRels = struct {
+	OwnerCircles        string
 	MemberCircleMembers string
 }{
+	OwnerCircles:        "OwnerCircles",
 	MemberCircleMembers: "MemberCircleMembers",
 }
 
 // userR is where relationships are stored.
 type userR struct {
+	OwnerCircles        CircleSlice       `boil:"OwnerCircles" json:"OwnerCircles" toml:"OwnerCircles" yaml:"OwnerCircles"`
 	MemberCircleMembers CircleMemberSlice `boil:"MemberCircleMembers" json:"MemberCircleMembers" toml:"MemberCircleMembers" yaml:"MemberCircleMembers"`
 }
 
@@ -386,6 +389,28 @@ func (q userQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bool,
 	return count > 0, nil
 }
 
+// OwnerCircles retrieves all the circle's Circles with an executor via owner_id column.
+func (o *User) OwnerCircles(mods ...qm.QueryMod) circleQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("`circle`.`owner_id`=?", o.ID),
+		qmhelper.WhereIsNull("`circle`.`deleted_at`"),
+	)
+
+	query := Circles(queryMods...)
+	queries.SetFrom(query.Query, "`circle`")
+
+	if len(queries.GetSelect(query.Query)) == 0 {
+		queries.SetSelect(query.Query, []string{"`circle`.*"})
+	}
+
+	return query
+}
+
 // MemberCircleMembers retrieves all the circle_member's CircleMembers with an executor via member_id column.
 func (o *User) MemberCircleMembers(mods ...qm.QueryMod) circleMemberQuery {
 	var queryMods []qm.QueryMod
@@ -406,6 +431,105 @@ func (o *User) MemberCircleMembers(mods ...qm.QueryMod) circleMemberQuery {
 	}
 
 	return query
+}
+
+// LoadOwnerCircles allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (userL) LoadOwnerCircles(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUser interface{}, mods queries.Applicator) error {
+	var slice []*User
+	var object *User
+
+	if singular {
+		object = maybeUser.(*User)
+	} else {
+		slice = *maybeUser.(*[]*User)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &userR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &userR{}
+			}
+
+			for _, a := range args {
+				if a == obj.ID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`circle`),
+		qm.WhereIn(`circle.owner_id in ?`, args...),
+		qmhelper.WhereIsNull(`circle.deleted_at`),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load circle")
+	}
+
+	var resultSlice []*Circle
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice circle")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on circle")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for circle")
+	}
+
+	if len(circleAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.OwnerCircles = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &circleR{}
+			}
+			foreign.R.Owner = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.OwnerID {
+				local.R.OwnerCircles = append(local.R.OwnerCircles, foreign)
+				if foreign.R == nil {
+					foreign.R = &circleR{}
+				}
+				foreign.R.Owner = local
+				break
+			}
+		}
+	}
+
+	return nil
 }
 
 // LoadMemberCircleMembers allows an eager lookup of values, cached into the
@@ -504,6 +628,68 @@ func (userL) LoadMemberCircleMembers(ctx context.Context, e boil.ContextExecutor
 		}
 	}
 
+	return nil
+}
+
+// AddOwnerCirclesG adds the given related objects to the existing relationships
+// of the user, optionally inserting them as new records.
+// Appends related to o.R.OwnerCircles.
+// Sets related.R.Owner appropriately.
+// Uses the global database handle.
+func (o *User) AddOwnerCirclesG(ctx context.Context, insert bool, related ...*Circle) error {
+	return o.AddOwnerCircles(ctx, boil.GetContextDB(), insert, related...)
+}
+
+// AddOwnerCircles adds the given related objects to the existing relationships
+// of the user, optionally inserting them as new records.
+// Appends related to o.R.OwnerCircles.
+// Sets related.R.Owner appropriately.
+func (o *User) AddOwnerCircles(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Circle) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.OwnerID = o.ID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE `circle` SET %s WHERE %s",
+				strmangle.SetParamNames("`", "`", 0, []string{"owner_id"}),
+				strmangle.WhereClause("`", "`", 0, circlePrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.IsDebug(ctx) {
+				writer := boil.DebugWriterFrom(ctx)
+				fmt.Fprintln(writer, updateQuery)
+				fmt.Fprintln(writer, values)
+			}
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.OwnerID = o.ID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &userR{
+			OwnerCircles: related,
+		}
+	} else {
+		o.R.OwnerCircles = append(o.R.OwnerCircles, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &circleR{
+				Owner: o,
+			}
+		} else {
+			rel.R.Owner = o
+		}
+	}
 	return nil
 }
 

@@ -748,6 +748,114 @@ func testCircleToManyAddOpCircleMembers(t *testing.T) {
 		}
 	}
 }
+func testCircleToOneUserUsingOwner(t *testing.T) {
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var local Circle
+	var foreign User
+
+	seed := randomize.NewSeed()
+	if err := randomize.Struct(seed, &local, circleDBTypes, false, circleColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Circle struct: %s", err)
+	}
+	if err := randomize.Struct(seed, &foreign, userDBTypes, false, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
+	}
+
+	if err := foreign.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	local.OwnerID = foreign.ID
+	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	check, err := local.Owner().One(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if check.ID != foreign.ID {
+		t.Errorf("want: %v, got %v", foreign.ID, check.ID)
+	}
+
+	slice := CircleSlice{&local}
+	if err = local.L.LoadOwner(ctx, tx, false, (*[]*Circle)(&slice), nil); err != nil {
+		t.Fatal(err)
+	}
+	if local.R.Owner == nil {
+		t.Error("struct should have been eager loaded")
+	}
+
+	local.R.Owner = nil
+	if err = local.L.LoadOwner(ctx, tx, true, &local, nil); err != nil {
+		t.Fatal(err)
+	}
+	if local.R.Owner == nil {
+		t.Error("struct should have been eager loaded")
+	}
+}
+
+func testCircleToOneSetOpUserUsingOwner(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Circle
+	var b, c User
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, circleDBTypes, false, strmangle.SetComplement(circlePrimaryKeyColumns, circleColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &b, userDBTypes, false, strmangle.SetComplement(userPrimaryKeyColumns, userColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, userDBTypes, false, strmangle.SetComplement(userPrimaryKeyColumns, userColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	for i, x := range []*User{&b, &c} {
+		err = a.SetOwner(ctx, tx, i != 0, x)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if a.R.Owner != x {
+			t.Error("relationship struct not set to correct value")
+		}
+
+		if x.R.OwnerCircles[0] != &a {
+			t.Error("failed to append to foreign relationship struct")
+		}
+		if a.OwnerID != x.ID {
+			t.Error("foreign key was wrong value", a.OwnerID)
+		}
+
+		zero := reflect.Zero(reflect.TypeOf(a.OwnerID))
+		reflect.Indirect(reflect.ValueOf(&a.OwnerID)).Set(zero)
+
+		if err = a.Reload(ctx, tx); err != nil {
+			t.Fatal("failed to reload", err)
+		}
+
+		if a.OwnerID != x.ID {
+			t.Error("foreign key was wrong value", a.OwnerID, x.ID)
+		}
+	}
+}
 
 func testCirclesReload(t *testing.T) {
 	t.Parallel()
@@ -823,7 +931,7 @@ func testCirclesSelect(t *testing.T) {
 }
 
 var (
-	circleDBTypes = map[string]string{`ID`: `char`, `Name`: `varchar`, `CreatedAt`: `datetime`, `UpdatedAt`: `datetime`, `DeletedAt`: `datetime`}
+	circleDBTypes = map[string]string{`ID`: `char`, `Name`: `varchar`, `OwnerID`: `char`, `CreatedAt`: `datetime`, `UpdatedAt`: `datetime`, `DeletedAt`: `datetime`}
 	_             = bytes.MinRead
 )
 

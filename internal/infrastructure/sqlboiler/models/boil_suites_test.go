@@ -107,6 +107,7 @@ func TestInsert(t *testing.T) {
 // TestToOne tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToOne(t *testing.T) {
+	t.Run("CircleToUserUsingOwner", testCircleToOneUserUsingOwner)
 	t.Run("CircleMemberToCircleUsingCircle", testCircleMemberToOneCircleUsingCircle)
 	t.Run("CircleMemberToUserUsingMember", testCircleMemberToOneUserUsingMember)
 }
@@ -119,12 +120,14 @@ func TestOneToOne(t *testing.T) {}
 // or deadlocks can occur.
 func TestToMany(t *testing.T) {
 	t.Run("CircleToCircleMembers", testCircleToManyCircleMembers)
+	t.Run("UserToOwnerCircles", testUserToManyOwnerCircles)
 	t.Run("UserToMemberCircleMembers", testUserToManyMemberCircleMembers)
 }
 
 // TestToOneSet tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToOneSet(t *testing.T) {
+	t.Run("CircleToUserUsingOwnerCircles", testCircleToOneSetOpUserUsingOwner)
 	t.Run("CircleMemberToCircleUsingCircleMembers", testCircleMemberToOneSetOpCircleUsingCircle)
 	t.Run("CircleMemberToUserUsingMemberCircleMembers", testCircleMemberToOneSetOpUserUsingMember)
 }
@@ -145,6 +148,7 @@ func TestOneToOneRemove(t *testing.T) {}
 // or deadlocks can occur.
 func TestToManyAdd(t *testing.T) {
 	t.Run("CircleToCircleMembers", testCircleToManyAddOpCircleMembers)
+	t.Run("UserToOwnerCircles", testUserToManyAddOpOwnerCircles)
 	t.Run("UserToMemberCircleMembers", testUserToManyAddOpMemberCircleMembers)
 }
 
