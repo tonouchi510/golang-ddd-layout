@@ -318,6 +318,11 @@ func AddCircleMemberHook(hookPoint boil.HookPoint, circleMemberHook CircleMember
 	}
 }
 
+// OneG returns a single circleMember record from the query using the global executor.
+func (q circleMemberQuery) OneG(ctx context.Context) (*CircleMember, error) {
+	return q.One(ctx, boil.GetContextDB())
+}
+
 // One returns a single circleMember record from the query.
 func (q circleMemberQuery) One(ctx context.Context, exec boil.ContextExecutor) (*CircleMember, error) {
 	o := &CircleMember{}
@@ -337,6 +342,11 @@ func (q circleMemberQuery) One(ctx context.Context, exec boil.ContextExecutor) (
 	}
 
 	return o, nil
+}
+
+// AllG returns all CircleMember records from the query using the global executor.
+func (q circleMemberQuery) AllG(ctx context.Context) (CircleMemberSlice, error) {
+	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all CircleMember records from the query.
@@ -359,6 +369,11 @@ func (q circleMemberQuery) All(ctx context.Context, exec boil.ContextExecutor) (
 	return o, nil
 }
 
+// CountG returns the count of all CircleMember records in the query, and panics on error.
+func (q circleMemberQuery) CountG(ctx context.Context) (int64, error) {
+	return q.Count(ctx, boil.GetContextDB())
+}
+
 // Count returns the count of all CircleMember records in the query.
 func (q circleMemberQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -372,6 +387,11 @@ func (q circleMemberQuery) Count(ctx context.Context, exec boil.ContextExecutor)
 	}
 
 	return count, nil
+}
+
+// ExistsG checks if the row exists in the table, and panics on error.
+func (q circleMemberQuery) ExistsG(ctx context.Context) (bool, error) {
+	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -620,6 +640,14 @@ func (circleMemberL) LoadMember(ctx context.Context, e boil.ContextExecutor, sin
 	return nil
 }
 
+// SetCircleG of the circleMember to the related item.
+// Sets o.R.Circle to related.
+// Adds o to related.R.CircleMembers.
+// Uses the global database handle.
+func (o *CircleMember) SetCircleG(ctx context.Context, insert bool, related *Circle) error {
+	return o.SetCircle(ctx, boil.GetContextDB(), insert, related)
+}
+
 // SetCircle of the circleMember to the related item.
 // Sets o.R.Circle to related.
 // Adds o to related.R.CircleMembers.
@@ -665,6 +693,14 @@ func (o *CircleMember) SetCircle(ctx context.Context, exec boil.ContextExecutor,
 	}
 
 	return nil
+}
+
+// SetMemberG of the circleMember to the related item.
+// Sets o.R.Member to related.
+// Adds o to related.R.MemberCircleMembers.
+// Uses the global database handle.
+func (o *CircleMember) SetMemberG(ctx context.Context, insert bool, related *User) error {
+	return o.SetMember(ctx, boil.GetContextDB(), insert, related)
 }
 
 // SetMember of the circleMember to the related item.
@@ -720,6 +756,11 @@ func CircleMembers(mods ...qm.QueryMod) circleMemberQuery {
 	return circleMemberQuery{NewQuery(mods...)}
 }
 
+// FindCircleMemberG retrieves a single record by ID.
+func FindCircleMemberG(ctx context.Context, iD int, selectCols ...string) (*CircleMember, error) {
+	return FindCircleMember(ctx, boil.GetContextDB(), iD, selectCols...)
+}
+
 // FindCircleMember retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindCircleMember(ctx context.Context, exec boil.ContextExecutor, iD int, selectCols ...string) (*CircleMember, error) {
@@ -744,6 +785,11 @@ func FindCircleMember(ctx context.Context, exec boil.ContextExecutor, iD int, se
 	}
 
 	return circleMemberObj, nil
+}
+
+// InsertG a single record. See Insert for whitelist behavior description.
+func (o *CircleMember) InsertG(ctx context.Context, columns boil.Columns) error {
+	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -862,6 +908,12 @@ CacheNoHooks:
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
+// UpdateG a single CircleMember record using the global executor.
+// See Update for more documentation.
+func (o *CircleMember) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
+	return o.Update(ctx, boil.GetContextDB(), columns)
+}
+
 // Update uses an executor to update the CircleMember.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
@@ -931,6 +983,11 @@ func (o *CircleMember) Update(ctx context.Context, exec boil.ContextExecutor, co
 	return rowsAff, o.doAfterUpdateHooks(ctx, exec)
 }
 
+// UpdateAllG updates all rows with the specified column values.
+func (q circleMemberQuery) UpdateAllG(ctx context.Context, cols M) (int64, error) {
+	return q.UpdateAll(ctx, boil.GetContextDB(), cols)
+}
+
 // UpdateAll updates all rows with the specified column values.
 func (q circleMemberQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	queries.SetUpdate(q.Query, cols)
@@ -946,6 +1003,11 @@ func (q circleMemberQuery) UpdateAll(ctx context.Context, exec boil.ContextExecu
 	}
 
 	return rowsAff, nil
+}
+
+// UpdateAllG updates all rows with the specified column values.
+func (o CircleMemberSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
+	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
 }
 
 // UpdateAll updates all rows with the specified column values, using an executor.
@@ -994,6 +1056,11 @@ func (o CircleMemberSlice) UpdateAll(ctx context.Context, exec boil.ContextExecu
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all circleMember")
 	}
 	return rowsAff, nil
+}
+
+// UpsertG attempts an insert, and does an update or ignore on conflict.
+func (o *CircleMember) UpsertG(ctx context.Context, updateColumns, insertColumns boil.Columns) error {
+	return o.Upsert(ctx, boil.GetContextDB(), updateColumns, insertColumns)
 }
 
 var mySQLCircleMemberUniqueColumns = []string{
@@ -1152,6 +1219,12 @@ CacheNoHooks:
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
+// DeleteG deletes a single CircleMember record.
+// DeleteG will match against the primary key column to find the record to delete.
+func (o *CircleMember) DeleteG(ctx context.Context) (int64, error) {
+	return o.Delete(ctx, boil.GetContextDB())
+}
+
 // Delete deletes a single CircleMember record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *CircleMember) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1209,6 +1282,11 @@ func (q circleMemberQuery) DeleteAll(ctx context.Context, exec boil.ContextExecu
 	return rowsAff, nil
 }
 
+// DeleteAllG deletes all rows in the slice.
+func (o CircleMemberSlice) DeleteAllG(ctx context.Context) (int64, error) {
+	return o.DeleteAll(ctx, boil.GetContextDB())
+}
+
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o CircleMemberSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if len(o) == 0 {
@@ -1258,6 +1336,15 @@ func (o CircleMemberSlice) DeleteAll(ctx context.Context, exec boil.ContextExecu
 	return rowsAff, nil
 }
 
+// ReloadG refetches the object from the database using the primary keys.
+func (o *CircleMember) ReloadG(ctx context.Context) error {
+	if o == nil {
+		return errors.New("models: no CircleMember provided for reload")
+	}
+
+	return o.Reload(ctx, boil.GetContextDB())
+}
+
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *CircleMember) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1268,6 +1355,16 @@ func (o *CircleMember) Reload(ctx context.Context, exec boil.ContextExecutor) er
 
 	*o = *ret
 	return nil
+}
+
+// ReloadAllG refetches every row with matching primary key column values
+// and overwrites the original object slice with the newly updated slice.
+func (o *CircleMemberSlice) ReloadAllG(ctx context.Context) error {
+	if o == nil {
+		return errors.New("models: empty CircleMemberSlice provided for reload all")
+	}
+
+	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1297,6 +1394,11 @@ func (o *CircleMemberSlice) ReloadAll(ctx context.Context, exec boil.ContextExec
 	*o = slice
 
 	return nil
+}
+
+// CircleMemberExistsG checks if the CircleMember row exists.
+func CircleMemberExistsG(ctx context.Context, iD int) (bool, error) {
+	return CircleMemberExists(ctx, boil.GetContextDB(), iD)
 }
 
 // CircleMemberExists checks if the CircleMember row exists.

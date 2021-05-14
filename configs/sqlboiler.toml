@@ -1,5 +1,6 @@
 pkgname="models"
 output="internal/infrastructure/sqlboiler/models"
+add-global-variants=true
 [mysql]
   dbname  = "golang_ddd_layout"
   host    = "localhost"
