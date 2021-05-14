@@ -3,7 +3,7 @@ package circles
 import (
 	"fmt"
 
-	"github.com/huroshotoku/golang-ddd-layout/internal/app/domain/models/users"
+	"github.com/huroshotoku/golang-ddd-layout/internal/domain/models/users"
 )
 
 type Circle struct {
