@@ -1,6 +1,6 @@
 package user_application_service
 
-import "github.com/huroshotoku/golang-ddd-layout/internal/domain/models/users"
+import "github.com/tonouchi510/golang-ddd-layout/internal/domain/models/users"
 
 type UserData struct {
 	Id   string

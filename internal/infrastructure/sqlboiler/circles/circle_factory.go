@@ -1,8 +1,8 @@
 package circles
 
 import (
-	"github.com/huroshotoku/golang-ddd-layout/internal/domain/models/circles"
-	"github.com/huroshotoku/golang-ddd-layout/internal/domain/models/users"
+	"github.com/tonouchi510/golang-ddd-layout/internal/domain/models/circles"
+	"github.com/tonouchi510/golang-ddd-layout/internal/domain/models/users"
 )
 
 type circleFactory struct{}

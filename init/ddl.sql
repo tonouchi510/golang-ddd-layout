@@ -1,6 +1,5 @@
 use golang_ddd_layout;
 
-
 drop table if exists `user`;
 create table user(
     id          char(36) not null,

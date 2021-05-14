@@ -1,4 +1,4 @@
-module github.com/huroshotoku/golang-ddd-layout
+module github.com/tonouchi510/golang-ddd-layout
 
 go 1.15
 

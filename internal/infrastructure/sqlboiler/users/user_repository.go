@@ -3,7 +3,7 @@ package users
 import (
 	"fmt"
 
-	"github.com/huroshotoku/golang-ddd-layout/internal/domain/models/users"
+	"github.com/tonouchi510/golang-ddd-layout/internal/domain/models/users"
 )
 
 // この中でdbコネクションとか保持？
@@ -17,6 +17,7 @@ func (ur userRepository) Find(id users.UserId) (*users.User, error) {
 	// ユーザが存在しなかったケースをエラーとして返すか、user = nilで表現するか...
 	// 一旦エラーで表現する想定で依存箇所書いてる
 	//
+	user, err := models.
 	return nil, nil
 }
 

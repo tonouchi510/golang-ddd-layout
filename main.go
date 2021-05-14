@@ -6,7 +6,7 @@ import (
 	"log"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/huroshotoku/golang-ddd-layout/internal/domain/models/users"
+	"github.com/tonouchi510/golang-ddd-layout/internal/domain/models/users"
 	"github.com/volatiletech/sqlboiler/boil"
 )
 
