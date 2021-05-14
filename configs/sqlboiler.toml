@@ -1,0 +1,9 @@
+pkgname="models"
+output="internal/infrastructure/sqlboiler/models"
+[mysql]
+  dbname  = "golang_ddd_layout"
+  host    = "localhost"
+  port    = 3306
+  user    = "test_user"
+  pass    = "password"
+  sslmode = "false"
