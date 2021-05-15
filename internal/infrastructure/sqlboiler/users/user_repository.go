@@ -89,11 +89,11 @@ func NewUserDataModelBuilder() (users.IUserNotification, error) {
 	return &UserDataModelBuilder{}, nil
 }
 
-func (b *UserDataModelBuilder) Id(id users.UserId) {
+func (b *UserDataModelBuilder) SetId(id users.UserId) {
 	b.id = id
 }
 
-func (b *UserDataModelBuilder) Name(name users.UserName) {
+func (b *UserDataModelBuilder) SetName(name users.UserName) {
 	b.name = name
 }
 

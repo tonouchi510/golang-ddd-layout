@@ -118,19 +118,19 @@ func NewUserDataModelBuilder() (circles.ICircleNotification, error) {
 	return &CircleDataModelBuilder{}, nil
 }
 
-func (b *CircleDataModelBuilder) Id(id circles.CircleId) {
+func (b *CircleDataModelBuilder) SetId(id circles.CircleId) {
 	b.id = id
 }
 
-func (b *CircleDataModelBuilder) Name(name circles.CircleName) {
+func (b *CircleDataModelBuilder) SetName(name circles.CircleName) {
 	b.name = name
 }
 
-func (b *CircleDataModelBuilder) OwnerId(ownerId users.UserId) {
+func (b *CircleDataModelBuilder) SetOwnerId(ownerId users.UserId) {
 	b.ownerId = ownerId
 }
 
-func (b *CircleDataModelBuilder) Members(members []users.UserId) {
+func (b *CircleDataModelBuilder) SetMembers(members []users.UserId) {
 	b.members = members
 }
 

@@ -1,4 +1,4 @@
-package circle_application_service
+package circles
 
 import (
 	"context"
@@ -23,12 +23,14 @@ type circleApplicationService struct {
 }
 
 func NewCircleApplicationService(
+	ctx context.Context,
 	factory circles.ICircleFactory,
 	service circles.CircleService,
 	circleRepo circles.ICircleRepository,
 	userRepo users.IUserRepository,
 ) (ICircleApplicationService, error) {
 	s := circleApplicationService{
+		ctx:        ctx,
 		factory:    factory,
 		service:    service,
 		circleRepo: circleRepo,

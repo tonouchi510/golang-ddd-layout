@@ -1,4 +1,4 @@
-package circle_application_service
+package circles
 
 type CircleCreateCommand struct {
 	UserId string

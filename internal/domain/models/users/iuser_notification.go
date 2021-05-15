@@ -1,6 +1,6 @@
 package users
 
 type IUserNotification interface {
-	Id(id UserId)
-	Name(name UserName)
+	SetId(id UserId)
+	SetName(name UserName)
 }

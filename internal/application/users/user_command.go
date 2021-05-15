@@ -1,4 +1,4 @@
-package user_application_service
+package users
 
 type RegistorUserCommand struct {
 	Name string

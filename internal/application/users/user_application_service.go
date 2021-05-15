@@ -1,4 +1,4 @@
-package user_application_service
+package users
 
 import (
 	"fmt"
@@ -60,7 +60,10 @@ func (s userApplicationService) Get(command GetUserCommand) (UserData, error) {
 	if err != nil {
 		return UserData{}, err
 	}
-	userData := NewUserData(*user)
+	userData, err := NewUserData(*user)
+	if err != nil {
+		return UserData{}, err
+	}
 	return userData, nil
 }
 

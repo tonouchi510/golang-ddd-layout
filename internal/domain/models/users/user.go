@@ -41,7 +41,7 @@ func (u User) Equals(other User) (bool, error) {
 }
 
 func (u User) Notify(note IUserNotification) error {
-	note.Id(u.id)
-	note.Name(u.name)
+	note.SetId(u.id)
+	note.SetName(u.name)
 	return nil
 }

@@ -40,9 +40,9 @@ func (c Circle) CountMembers() int {
 }
 
 func (c Circle) Notify(note ICircleNotification) error {
-	note.Id(c.id)
-	note.Name(c.name)
-	note.OwnerId(c.ownerId)
-	note.Members(c.members)
+	note.SetId(c.id)
+	note.SetName(c.name)
+	note.SetOwnerId(c.ownerId)
+	note.SetMembers(c.members)
 	return nil
 }

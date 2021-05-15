@@ -1,4 +1,4 @@
-package user_application_service
+package users
 
 import "github.com/tonouchi510/golang-ddd-layout/internal/domain/models/users"
 
@@ -7,13 +7,17 @@ type UserData struct {
 	Name string
 }
 
-// リポジトリでDataModelにして返すようにしてるけど、これいる？
-func NewUserData(user users.User) UserData {
-	// パラメータが変わった時の修正箇所を一箇所に留めるため、ドメインオブジェクトに依存させる.
-	ud := UserData{
-		Id:   user.Id,
-		Name: user.Name,
-	}
-	// TODO: ここも本来ポインタにしたくないが、nilを扱うためにポインタにしてる（直し方を後で聞く）
-	return ud
+func NewUserData(user users.User) (UserData, error) {
+	userData := &UserData{}
+	user.Notify(userData)
+
+	return *userData, nil
+}
+
+func (d *UserData) SetId(id users.UserId) {
+	d.Id = string(id)
+}
+
+func (b *UserData) SetName(name users.UserName) {
+	b.Name = string(name)
 }
