@@ -5,5 +5,5 @@ import (
 )
 
 type ICircleFactory interface {
-	Create(name CircleName, owner users.UserId) (*Circle, error)
+	Create(name CircleName, ownerId users.UserId) (*Circle, error)
 }

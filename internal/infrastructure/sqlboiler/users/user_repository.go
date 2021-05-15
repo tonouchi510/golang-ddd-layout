@@ -1,53 +1,75 @@
 package users
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/tonouchi510/golang-ddd-layout/internal/domain/models/users"
+	"github.com/tonouchi510/golang-ddd-layout/internal/infrastructure/sqlboiler/models"
+	"github.com/volatiletech/sqlboiler/boil"
 )
 
-// この中でdbコネクションとか保持？
-type userRepository struct{}
+type userRepository struct {
+	ctx context.Context
+}
 
-func NewUserRepository() (users.IUserRepository, error) {
-	return &userRepository{}, nil
+func NewUserRepository(ctx context.Context) (users.IUserRepository, error) {
+	return &userRepository{ctx: ctx}, nil
 }
 
 func (ur userRepository) Find(id users.UserId) (*users.User, error) {
-	// ユーザが存在しなかったケースをエラーとして返すか、user = nilで表現するか...
-	// 一旦エラーで表現する想定で依存箇所書いてる
-	//
-	user, err := models.
-	return nil, nil
-}
-
-func (ur userRepository) FindByName(name users.UserName) (*users.User, error) {
-	return nil, nil
-}
-
-func (ur userRepository) Save(user users.User) error {
-	userDataModelBuilder := &UserDataModelBuilder{}
-	user.Notify(userDataModelBuilder)
-	userDataModel := userDataModelBuilder.Build()
-	fmt.Println(userDataModel.id)
-	return nil
-}
-
-func (ur userRepository) Delete(user users.User) error {
-	return nil
-}
-
-type UserDataModel struct {
-	id   string
-	name string
-}
-
-func ToModel(from UserDataModel) (*users.User, error) {
-	userId, err := users.NewUserId(from.id)
+	// ユーザが存在しない場合はエラーが変える
+	userData, err := models.FindUserG(ur.ctx, string(id))
 	if err != nil {
 		return nil, err
 	}
-	userName, err := users.NewUserName(from.name)
+	user, err := ToModel(*userData)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func (ur userRepository) FindByName(name users.UserName) (*users.User, error) {
+	userData, err := models.Users(models.UserWhere.Name.EQ(string(name))).OneG(ur.ctx)
+	if err != nil {
+		return nil, err
+	}
+	user, err := ToModel(*userData)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func (ur userRepository) Save(user users.User) error {
+	// userオブジェクトのパラメータ取得
+	// privateな変数を取得するために、通知オブジェクトを使う
+	userDataModelBuilder := &UserDataModelBuilder{}
+	user.Notify(userDataModelBuilder)
+	userData := userDataModelBuilder.Build()
+	fmt.Println(userData.ID)
+
+	err := userData.InsertG(ur.ctx, boil.Infer())
+	return err
+}
+
+func (ur userRepository) Delete(user users.User) error {
+	userDataModelBuilder := &UserDataModelBuilder{}
+	user.Notify(userDataModelBuilder)
+	userData := userDataModelBuilder.Build()
+	fmt.Println(userData.ID)
+
+	_, err := userData.DeleteG(ur.ctx, false)
+	return err
+}
+
+func ToModel(from models.User) (*users.User, error) {
+	userId, err := users.NewUserId(from.ID)
+	if err != nil {
+		return nil, err
+	}
+	userName, err := users.NewUserName(from.Name)
 	if err != nil {
 		return nil, err
 	}
@@ -75,9 +97,9 @@ func (b *UserDataModelBuilder) Name(name users.UserName) {
 	b.name = name
 }
 
-func (b UserDataModelBuilder) Build() UserDataModel {
-	return UserDataModel{
-		id:   string(b.id),
-		name: string(b.name),
+func (b UserDataModelBuilder) Build() models.User {
+	return models.User{
+		ID:   string(b.id),
+		Name: string(b.name),
 	}
 }

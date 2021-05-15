@@ -9,15 +9,15 @@ import (
 type Circle struct {
 	id      CircleId // idの公開はアリ
 	name    CircleName
-	owner   users.UserId
+	ownerId users.UserId
 	members []users.UserId
 }
 
-func NewCircle(id CircleId, name CircleName, owner users.UserId, members []users.UserId) (*Circle, error) {
+func NewCircle(id CircleId, name CircleName, ownerId users.UserId, members []users.UserId) (*Circle, error) {
 	circle := Circle{
 		id:      id,
 		name:    name,
-		owner:   owner,
+		ownerId: ownerId,
 		members: members,
 	}
 	return &circle, nil
@@ -37,4 +37,12 @@ func (c Circle) IsFull() bool {
 
 func (c Circle) CountMembers() int {
 	return len(c.members) + 1 // ownerユーザ分を足している
+}
+
+func (c Circle) Notify(note ICircleNotification) error {
+	note.Id(c.id)
+	note.Name(c.name)
+	note.OwnerId(c.ownerId)
+	note.Members(c.members)
+	return nil
 }
