@@ -48,4 +48,6 @@ create table circle_members(
     unique key index_circle_id_and_member_id (circle_id, member_id)
 );
 
+INSERT INTO user (id, name) VALUES ("33d87f0f-d700-8e3d-4efe-e89df5f3c5f2", "test");
+
 set FOREIGN_KEY_CHECKS=1;
