@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"github.com/friendsofgo/errors"
-	"github.com/volatiletech/null"
+	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
@@ -1128,12 +1128,12 @@ func (o *User) Upsert(ctx context.Context, exec boil.ContextExecutor, updateColu
 			userPrimaryKeyColumns,
 		)
 
-		if len(update) == 0 {
+		if !updateColumns.IsNone() && len(update) == 0 {
 			return errors.New("models: unable to upsert user, could not build update column list")
 		}
 
 		ret = strmangle.SetComplement(ret, nzUniques)
-		cache.query = buildUpsertQueryMySQL(dialect, "user", update, insert)
+		cache.query = buildUpsertQueryMySQL(dialect, "`user`", update, insert)
 		cache.retQuery = fmt.Sprintf(
 			"SELECT %s FROM `user` WHERE %s",
 			strings.Join(strmangle.IdentQuoteSlice(dialect.LQ, dialect.RQ, ret), ","),
