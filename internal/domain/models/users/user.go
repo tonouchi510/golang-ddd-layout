@@ -7,13 +7,13 @@ import (
 )
 
 type User struct {
-	id   UserId
+	Id   UserId
 	name UserName
 }
 
 func NewUser(id UserId, name UserName) (*User, error) {
 	newUser := User{
-		id:   id,
+		Id:   id,
 		name: name,
 	}
 	return &newUser, nil
@@ -25,7 +25,7 @@ func NewUserByName(name UserName) (*User, error) {
 		return nil, fmt.Errorf("UserIdの生成に失敗しました: %s", err)
 	}
 	user := User{
-		id:   UserId(id.String()),
+		Id:   UserId(id.String()),
 		name: name,
 	}
 	return &user, nil
@@ -37,11 +37,11 @@ func (u *User) ChangeName(name UserName) error {
 }
 
 func (u User) Equals(other User) (bool, error) {
-	return (u.id == other.id), nil
+	return (u.Id == other.Id), nil
 }
 
 func (u User) Notify(note IUserNotification) error {
-	note.SetId(u.id)
+	note.SetId(u.Id)
 	note.SetName(u.name)
 	return nil
 }

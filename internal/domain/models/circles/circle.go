@@ -7,7 +7,7 @@ import (
 )
 
 type Circle struct {
-	id      CircleId // idの公開はアリ
+	Id      CircleId // idの公開はアリ
 	name    CircleName
 	ownerId users.UserId
 	members []users.UserId
@@ -15,7 +15,7 @@ type Circle struct {
 
 func NewCircle(id CircleId, name CircleName, ownerId users.UserId, members []users.UserId) (*Circle, error) {
 	circle := Circle{
-		id:      id,
+		Id:      id,
 		name:    name,
 		ownerId: ownerId,
 		members: members,
@@ -25,7 +25,7 @@ func NewCircle(id CircleId, name CircleName, ownerId users.UserId, members []use
 
 func (c *Circle) Join(memberId users.UserId) error {
 	if c.IsFull() {
-		return fmt.Errorf("CircleFullError: %s", c.id)
+		return fmt.Errorf("CircleFullError: %s", c.Id)
 	}
 	c.members = append(c.members, memberId)
 	return nil
@@ -40,7 +40,7 @@ func (c Circle) CountMembers() int {
 }
 
 func (c Circle) Notify(note ICircleNotification) error {
-	note.SetId(c.id)
+	note.SetId(c.Id)
 	note.SetName(c.name)
 	note.SetOwnerId(c.ownerId)
 	note.SetMembers(c.members)
