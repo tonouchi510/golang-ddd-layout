@@ -9,7 +9,7 @@ import (
 	"github.com/tonouchi510/golang-ddd-layout/internal/domain/models/circles"
 	"github.com/tonouchi510/golang-ddd-layout/internal/domain/models/users"
 	"github.com/tonouchi510/golang-ddd-layout/internal/infrastructure/sqlboiler/models"
-	"github.com/volatiletech/sqlboiler/boil"
+	"github.com/volatiletech/sqlboiler/v4/boil"
 )
 
 type circleRepository struct {

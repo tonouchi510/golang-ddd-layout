@@ -10,9 +10,13 @@ func NewUserSirvice(userRepository IUserRepository) (UserService, error) {
 }
 
 func (us UserService) Exists(user User) (bool, error) {
-	found, err := us.userRepository.FindByName(user.name)
+	_, err := us.userRepository.FindByName(user.name)
 	if err != nil {
-		return false, err
+		if err.Error() == "sql: no rows in result set" {
+			return false, nil
+		} else {
+			return false, err
+		}
 	}
-	return found != nil, err
+	return true, nil
 }

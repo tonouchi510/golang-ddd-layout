@@ -7,7 +7,7 @@ import (
 )
 
 type IUserApplicationService interface {
-	Registor(command RegistorUserCommand) error
+	Registor(command RegistorUserCommand) (UserData, error)
 	Get(command GetUserCommand) (UserData, error)
 	Update(command UpdateUserCommand) error
 	Delete(command DeleteUserCommand) error
@@ -30,25 +30,32 @@ func NewUserApplicationService(
 	return ua, nil
 }
 
-func (s userApplicationService) Registor(command RegistorUserCommand) error {
+func (s userApplicationService) Registor(command RegistorUserCommand) (UserData, error) {
 	userName, err := users.NewUserName(command.Name)
 	if err != nil {
 		// errorってどこまで伝搬させる？
-		return err
+		return UserData{}, err
 	}
 	user, err := users.NewUserByName(userName)
 	if err != nil {
-		return err
+		return UserData{}, err
 	}
 	exist, err := s.service.Exists(*user)
 	if err != nil {
-		return err
+		return UserData{}, err
 	}
 	if exist {
-		return fmt.Errorf("ユーザ'%s'はすでに存在しています。", command.Name)
+		return UserData{}, fmt.Errorf("ユーザ'%s'はすでに存在しています。", command.Name)
 	}
-	s.repo.Save(*user)
-	return nil
+	err = s.repo.Save(*user)
+	if err != nil {
+		return UserData{}, err
+	}
+	userData, err := NewUserData(*user)
+	if err != nil {
+		return UserData{}, err
+	}
+	return userData, nil
 }
 
 func (s userApplicationService) Get(command GetUserCommand) (UserData, error) {
