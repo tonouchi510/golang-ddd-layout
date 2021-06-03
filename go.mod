@@ -8,7 +8,7 @@ require (
 	github.com/google/uuid v1.2.0
 	github.com/kat-co/vala v0.0.0-20170210184112-42e1d8b61f12
 	github.com/spf13/viper v1.6.3
-	github.com/volatiletech/null v8.0.0+incompatible // indirect
+	github.com/stretchr/testify v1.7.0
 	github.com/volatiletech/null/v8 v8.1.2
 	github.com/volatiletech/randomize v0.0.1
 	github.com/volatiletech/sqlboiler v3.7.1+incompatible

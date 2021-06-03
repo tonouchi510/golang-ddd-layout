@@ -22,7 +22,7 @@ func NewUser(id UserId, name UserName) (*User, error) {
 func NewUserByName(name UserName) (*User, error) {
 	id, err := uuid.NewRandom()
 	if err != nil {
-		return nil, fmt.Errorf("UserIdの生成に失敗しました: %s", err)
+		return nil, fmt.Errorf("UserIdの生成に失敗しました: %s", err)
 	}
 	user := User{
 		Id:   UserId(id.String()),
