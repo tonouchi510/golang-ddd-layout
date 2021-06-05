@@ -1,11 +1,5 @@
 package users
 
-import (
-	"fmt"
-
-	"github.com/google/uuid"
-)
-
 type User struct {
 	Id   UserId
 	name UserName
@@ -17,18 +11,6 @@ func NewUser(id UserId, name UserName) (*User, error) {
 		name: name,
 	}
 	return &newUser, nil
-}
-
-func NewUserByName(name UserName) (*User, error) {
-	id, err := uuid.NewRandom()
-	if err != nil {
-		return nil, fmt.Errorf("UserIdの生成に失敗しました: %s", err)
-	}
-	user := User{
-		Id:   UserId(id.String()),
-		name: name,
-	}
-	return &user, nil
 }
 
 func (u *User) ChangeName(name UserName) error {

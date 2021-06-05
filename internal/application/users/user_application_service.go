@@ -17,15 +17,18 @@ type IUserApplicationService interface {
 type userApplicationService struct {
 	repo    users.IUserRepository
 	service users.UserService
+	factory users.IUserFactory
 }
 
 func NewUserApplicationService(
 	repo users.IUserRepository,
 	service users.UserService,
+	factory users.IUserFactory,
 ) (IUserApplicationService, error) {
 	ua := userApplicationService{
 		repo:    repo,
 		service: service,
+		factory: factory,
 	}
 	return ua, nil
 }
@@ -36,7 +39,7 @@ func (s userApplicationService) Registor(command RegistorUserCommand) (UserData,
 		// errorってどこまで伝搬させる？
 		return UserData{}, err
 	}
-	user, err := users.NewUserByName(userName)
+	user, err := s.factory.Create(userName)
 	if err != nil {
 		return UserData{}, err
 	}
