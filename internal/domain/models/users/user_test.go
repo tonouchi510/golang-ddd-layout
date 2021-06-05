@@ -5,66 +5,62 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 )
 
 type UserTestSuite struct {
 	suite.Suite
-	id   UserId
 	name UserName
-	user User
+	user *User
+}
+
+func (s *UserTestSuite) createUser(name UserName) *User {
+	id, err := uuid.NewRandom()
+	if err != nil {
+		panic(err)
+	}
+	userId, err := NewUserId(id.String())
+	if err != nil {
+		panic(err)
+	}
+	user, err := NewUser(userId, name)
+	if err != nil {
+		panic(err)
+	}
+	return user
 }
 
 func TestUser(t *testing.T) {
 	suite.Run(t, new(UserTestSuite))
 }
 
-func (s *UserTestSuite) SetUpTest() {
-	id, err := uuid.NewRandom()
-	if err != nil {
-		panic(err)
-	}
-	s.id = UserId(id.String())
+func (s *UserTestSuite) SetupTest() {
 	s.name = UserName("hoge")
-	s.user = User{
-		Id:   s.id,
-		name: s.name,
-	}
+	s.user = s.createUser(s.name)
 }
 
 func (s *UserTestSuite) TearDownTest() {
-
-}
-
-func (s *UserTestSuite) TestNewUserByName() {
-	t := s.T()
-	t.Run("success NewUserByName()", func(t *testing.T) {
-		user, err := NewUserByName(s.name)
-		assert.Nil(t, err)
-		assert.Equal(t, 16, len(user.Id))
-		assert.Equal(t, s.name, user.name)
-	})
+	println("END.")
 }
 
 func (s *UserTestSuite) TestEquals() {
 	t := s.T()
 	t.Run("識別子が違うユーザ同士を比較したらfalseになる", func(t *testing.T) {
-		sameNameUser, err := NewUserByName(s.name)
-		if err != nil {
-			panic(err)
-		}
+		sameNameUser := s.createUser(s.name)
 		result, err := s.user.Equals(*sameNameUser)
-		assert.Nil(t, err)
-		assert.Negative(t, result)
+		require.Nil(t, err)
+		assert.False(t, result)
 	})
 
 	t.Run("識別子が同じユーザ同士を比較したらtrueになる", func(t *testing.T) {
-		sameIdUser, err := NewUser(s.id, s.name)
+		name := UserName("fuga")
+		sameIdUser, err := NewUser(s.user.Id, name)
 		if err != nil {
 			panic(err)
 		}
 		result, err := s.user.Equals(*sameIdUser)
-		assert.Nil(t, err)
-		assert.Positive(t, result)
+		require.Nil(t, err)
+		assert.True(t, result)
 	})
 }
