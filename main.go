@@ -9,7 +9,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	userAppService "github.com/tonouchi510/golang-ddd-layout/internal/application/users"
 	"github.com/tonouchi510/golang-ddd-layout/internal/domain/models/users"
-	userRepo "github.com/tonouchi510/golang-ddd-layout/internal/infrastructure/sqlboiler/users"
+	userInfra "github.com/tonouchi510/golang-ddd-layout/internal/infrastructure/sqlboiler/users"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 )
 
@@ -23,37 +23,34 @@ func main() {
 	}
 	boil.SetDB(db)
 
-	ur, err := userRepo.NewUserRepository(ctx)
+	ur, err := userInfra.NewUserRepository(ctx)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Fatalln(err.Error())
 	}
-	us, err := users.NewUserSirvice(ur)
-	if err != nil {
-		fmt.Println(err.Error())
-	}
+	us := users.NewUserService(ur)
+	uf := userInfra.NewUserFactory(ctx)
 
-	uas, err := userAppService.NewUserApplicationService(ur, us)
+	uas, err := userAppService.NewUserApplicationService(ur, us, uf)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Fatalln(err.Error())
 	}
 
 	c1, err := userAppService.NewRegistorUserCommand("fuga")
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Fatalln(err.Error())
 	}
 
 	userData, err := uas.Registor(c1)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Fatalln(err.Error())
 	}
 	c2, err := userAppService.NewGetUserCommand(userData.Id)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Fatalln(err.Error())
 	}
 	u, err := uas.Get(c2)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Fatalln(err.Error())
 	}
 	fmt.Println(u)
-
 }
