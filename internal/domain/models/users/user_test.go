@@ -11,8 +11,9 @@ import (
 
 type UserTestSuite struct {
 	suite.Suite
-	name UserName
-	user *User
+	name        UserName
+	user        *User
+	userService UserService
 }
 
 func (s *UserTestSuite) createUser(name UserName) *User {
@@ -35,25 +36,24 @@ func TestUser(t *testing.T) {
 	suite.Run(t, new(UserTestSuite))
 }
 
-func (s *UserTestSuite) SetupTest() {
-	s.name = UserName("hoge")
+func (s *UserTestSuite) SetupSuite() {
+	s.name = UserName("hoge") // testなので直接生成
 	s.user = s.createUser(s.name)
 }
 
-func (s *UserTestSuite) TearDownTest() {
-	println("END.")
+func (s *UserTestSuite) TearDownSuite() {
 }
 
-func (s *UserTestSuite) TestEquals() {
+func (s *UserTestSuite) TestUserModel() {
 	t := s.T()
-	t.Run("識別子が違うユーザ同士を比較したらfalseになる", func(t *testing.T) {
+	t.Run("Equals/識別子が違うユーザ同士を比較したらfalseになる", func(t *testing.T) {
 		sameNameUser := s.createUser(s.name)
 		result, err := s.user.Equals(*sameNameUser)
 		require.Nil(t, err)
 		assert.False(t, result)
 	})
 
-	t.Run("識別子が同じユーザ同士を比較したらtrueになる", func(t *testing.T) {
+	t.Run("Equals/識別子が同じユーザ同士を比較したらtrueになる", func(t *testing.T) {
 		name := UserName("fuga")
 		sameIdUser, err := NewUser(s.user.Id, name)
 		if err != nil {
@@ -62,5 +62,13 @@ func (s *UserTestSuite) TestEquals() {
 		result, err := s.user.Equals(*sameIdUser)
 		require.Nil(t, err)
 		assert.True(t, result)
+	})
+
+	t.Run("ChangeName/Success", func(t *testing.T) {
+		user := s.createUser(s.name)
+		newName := UserName("hogehoge")
+		err := user.ChangeName(newName)
+		require.Nil(t, err)
+		assert.Equal(t, newName, user.name)
 	})
 }
