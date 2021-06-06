@@ -13,9 +13,8 @@ import (
 
 type UserTestSuite struct {
 	suite.Suite
-	name        UserName
-	user        *User
-	userService UserService
+	name UserName
+	user *User
 }
 
 func (s *UserTestSuite) createUser(name UserName) *User {
