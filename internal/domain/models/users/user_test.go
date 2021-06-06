@@ -1,8 +1,10 @@
 package users
 
 import (
+	"fmt"
 	"testing"
 
+	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -70,5 +72,30 @@ func (s *UserTestSuite) TestUserModel() {
 		err := user.ChangeName(newName)
 		require.Nil(t, err)
 		assert.Equal(t, newName, user.name)
+	})
+}
+
+func (s *UserTestSuite) TestUserService() {
+	t := s.T()
+	t.Run("Exists/同じ名前のユーザが存在する場合、trueを返す", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+		repo := NewMockIUserRepository(ctrl)
+		repo.EXPECT().FindByName(s.user.name).Return(s.user, nil)
+		userService := NewUserService(repo)
+		exist, err := userService.Exists(*s.user)
+		require.Nil(t, err)
+		assert.True(t, exist)
+	})
+
+	t.Run("Exists/同じ名前のユーザが存在しない場合、falseを返す", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+		repo := NewMockIUserRepository(ctrl)
+		repo.EXPECT().FindByName(s.name).Return(nil, fmt.Errorf("sql: no rows in result set"))
+		userService := NewUserService(repo)
+		exist, err := userService.Exists(*s.user)
+		require.Nil(t, err)
+		assert.False(t, exist)
 	})
 }

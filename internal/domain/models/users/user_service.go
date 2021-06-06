@@ -4,9 +4,9 @@ type UserService struct {
 	userRepository IUserRepository
 }
 
-func NewUserSirvice(userRepository IUserRepository) (UserService, error) {
+func NewUserService(userRepository IUserRepository) UserService {
 	us := UserService{userRepository: userRepository}
-	return us, nil
+	return us
 }
 
 func (us UserService) Exists(user User) (bool, error) {
