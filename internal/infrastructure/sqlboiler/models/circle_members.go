@@ -330,26 +330,6 @@ func (q circleMemberQuery) OneG(ctx context.Context) (*CircleMember, error) {
 	return q.One(ctx, boil.GetContextDB())
 }
 
-// OneGP returns a single circleMember record from the query using the global executor, and panics on error.
-func (q circleMemberQuery) OneGP(ctx context.Context) *CircleMember {
-	o, err := q.One(ctx, boil.GetContextDB())
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return o
-}
-
-// OneP returns a single circleMember record from the query, and panics on error.
-func (q circleMemberQuery) OneP(ctx context.Context, exec boil.ContextExecutor) *CircleMember {
-	o, err := q.One(ctx, exec)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return o
-}
-
 // One returns a single circleMember record from the query.
 func (q circleMemberQuery) One(ctx context.Context, exec boil.ContextExecutor) (*CircleMember, error) {
 	o := &CircleMember{}
@@ -374,26 +354,6 @@ func (q circleMemberQuery) One(ctx context.Context, exec boil.ContextExecutor) (
 // AllG returns all CircleMember records from the query using the global executor.
 func (q circleMemberQuery) AllG(ctx context.Context) (CircleMemberSlice, error) {
 	return q.All(ctx, boil.GetContextDB())
-}
-
-// AllGP returns all CircleMember records from the query using the global executor, and panics on error.
-func (q circleMemberQuery) AllGP(ctx context.Context) CircleMemberSlice {
-	o, err := q.All(ctx, boil.GetContextDB())
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return o
-}
-
-// AllP returns all CircleMember records from the query, and panics on error.
-func (q circleMemberQuery) AllP(ctx context.Context, exec boil.ContextExecutor) CircleMemberSlice {
-	o, err := q.All(ctx, exec)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return o
 }
 
 // All returns all CircleMember records from the query.
@@ -421,26 +381,6 @@ func (q circleMemberQuery) CountG(ctx context.Context) (int64, error) {
 	return q.Count(ctx, boil.GetContextDB())
 }
 
-// CountGP returns the count of all CircleMember records in the query using the global executor, and panics on error.
-func (q circleMemberQuery) CountGP(ctx context.Context) int64 {
-	c, err := q.Count(ctx, boil.GetContextDB())
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return c
-}
-
-// CountP returns the count of all CircleMember records in the query, and panics on error.
-func (q circleMemberQuery) CountP(ctx context.Context, exec boil.ContextExecutor) int64 {
-	c, err := q.Count(ctx, exec)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return c
-}
-
 // Count returns the count of all CircleMember records in the query.
 func (q circleMemberQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -459,26 +399,6 @@ func (q circleMemberQuery) Count(ctx context.Context, exec boil.ContextExecutor)
 // ExistsG checks if the row exists in the table, and panics on error.
 func (q circleMemberQuery) ExistsG(ctx context.Context) (bool, error) {
 	return q.Exists(ctx, boil.GetContextDB())
-}
-
-// ExistsGP checks if the row exists in the table using the global executor, and panics on error.
-func (q circleMemberQuery) ExistsGP(ctx context.Context) bool {
-	e, err := q.Exists(ctx, boil.GetContextDB())
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return e
-}
-
-// ExistsP checks if the row exists in the table, and panics on error.
-func (q circleMemberQuery) ExistsP(ctx context.Context, exec boil.ContextExecutor) bool {
-	e, err := q.Exists(ctx, exec)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return e
 }
 
 // Exists checks if the row exists in the table.
@@ -745,26 +665,6 @@ func (o *CircleMember) SetCircleG(ctx context.Context, insert bool, related *Cir
 	return o.SetCircle(ctx, boil.GetContextDB(), insert, related)
 }
 
-// SetCircleP of the circleMember to the related item.
-// Sets o.R.Circle to related.
-// Adds o to related.R.CircleMembers.
-// Panics on error.
-func (o *CircleMember) SetCircleP(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Circle) {
-	if err := o.SetCircle(ctx, exec, insert, related); err != nil {
-		panic(boil.WrapErr(err))
-	}
-}
-
-// SetCircleGP of the circleMember to the related item.
-// Sets o.R.Circle to related.
-// Adds o to related.R.CircleMembers.
-// Uses the global database handle and panics on error.
-func (o *CircleMember) SetCircleGP(ctx context.Context, insert bool, related *Circle) {
-	if err := o.SetCircle(ctx, boil.GetContextDB(), insert, related); err != nil {
-		panic(boil.WrapErr(err))
-	}
-}
-
 // SetCircle of the circleMember to the related item.
 // Sets o.R.Circle to related.
 // Adds o to related.R.CircleMembers.
@@ -818,26 +718,6 @@ func (o *CircleMember) SetCircle(ctx context.Context, exec boil.ContextExecutor,
 // Uses the global database handle.
 func (o *CircleMember) SetMemberG(ctx context.Context, insert bool, related *User) error {
 	return o.SetMember(ctx, boil.GetContextDB(), insert, related)
-}
-
-// SetMemberP of the circleMember to the related item.
-// Sets o.R.Member to related.
-// Adds o to related.R.MemberCircleMembers.
-// Panics on error.
-func (o *CircleMember) SetMemberP(ctx context.Context, exec boil.ContextExecutor, insert bool, related *User) {
-	if err := o.SetMember(ctx, exec, insert, related); err != nil {
-		panic(boil.WrapErr(err))
-	}
-}
-
-// SetMemberGP of the circleMember to the related item.
-// Sets o.R.Member to related.
-// Adds o to related.R.MemberCircleMembers.
-// Uses the global database handle and panics on error.
-func (o *CircleMember) SetMemberGP(ctx context.Context, insert bool, related *User) {
-	if err := o.SetMember(ctx, boil.GetContextDB(), insert, related); err != nil {
-		panic(boil.WrapErr(err))
-	}
 }
 
 // SetMember of the circleMember to the related item.
@@ -898,26 +778,6 @@ func FindCircleMemberG(ctx context.Context, iD int, selectCols ...string) (*Circ
 	return FindCircleMember(ctx, boil.GetContextDB(), iD, selectCols...)
 }
 
-// FindCircleMemberP retrieves a single record by ID with an executor, and panics on error.
-func FindCircleMemberP(ctx context.Context, exec boil.ContextExecutor, iD int, selectCols ...string) *CircleMember {
-	retobj, err := FindCircleMember(ctx, exec, iD, selectCols...)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return retobj
-}
-
-// FindCircleMemberGP retrieves a single record by ID, and panics on error.
-func FindCircleMemberGP(ctx context.Context, iD int, selectCols ...string) *CircleMember {
-	retobj, err := FindCircleMember(ctx, boil.GetContextDB(), iD, selectCols...)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return retobj
-}
-
 // FindCircleMember retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindCircleMember(ctx context.Context, exec boil.ContextExecutor, iD int, selectCols ...string) (*CircleMember, error) {
@@ -947,22 +807,6 @@ func FindCircleMember(ctx context.Context, exec boil.ContextExecutor, iD int, se
 // InsertG a single record. See Insert for whitelist behavior description.
 func (o *CircleMember) InsertG(ctx context.Context, columns boil.Columns) error {
 	return o.Insert(ctx, boil.GetContextDB(), columns)
-}
-
-// InsertP a single record using an executor, and panics on error. See Insert
-// for whitelist behavior description.
-func (o *CircleMember) InsertP(ctx context.Context, exec boil.ContextExecutor, columns boil.Columns) {
-	if err := o.Insert(ctx, exec, columns); err != nil {
-		panic(boil.WrapErr(err))
-	}
-}
-
-// InsertGP a single record, and panics on error. See Insert for whitelist
-// behavior description.
-func (o *CircleMember) InsertGP(ctx context.Context, columns boil.Columns) {
-	if err := o.Insert(ctx, boil.GetContextDB(), columns); err != nil {
-		panic(boil.WrapErr(err))
-	}
 }
 
 // Insert a single record using an executor.
@@ -1087,28 +931,6 @@ func (o *CircleMember) UpdateG(ctx context.Context, columns boil.Columns) (int64
 	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
-// UpdateP uses an executor to update the CircleMember, and panics on error.
-// See Update for more documentation.
-func (o *CircleMember) UpdateP(ctx context.Context, exec boil.ContextExecutor, columns boil.Columns) int64 {
-	rowsAff, err := o.Update(ctx, exec, columns)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return rowsAff
-}
-
-// UpdateGP a single CircleMember record using the global executor. Panics on error.
-// See Update for more documentation.
-func (o *CircleMember) UpdateGP(ctx context.Context, columns boil.Columns) int64 {
-	rowsAff, err := o.Update(ctx, boil.GetContextDB(), columns)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return rowsAff
-}
-
 // Update uses an executor to update the CircleMember.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
@@ -1178,16 +1000,6 @@ func (o *CircleMember) Update(ctx context.Context, exec boil.ContextExecutor, co
 	return rowsAff, o.doAfterUpdateHooks(ctx, exec)
 }
 
-// UpdateAllP updates all rows with matching column names, and panics on error.
-func (q circleMemberQuery) UpdateAllP(ctx context.Context, exec boil.ContextExecutor, cols M) int64 {
-	rowsAff, err := q.UpdateAll(ctx, exec, cols)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return rowsAff
-}
-
 // UpdateAllG updates all rows with the specified column values.
 func (q circleMemberQuery) UpdateAllG(ctx context.Context, cols M) (int64, error) {
 	return q.UpdateAll(ctx, boil.GetContextDB(), cols)
@@ -1213,26 +1025,6 @@ func (q circleMemberQuery) UpdateAll(ctx context.Context, exec boil.ContextExecu
 // UpdateAllG updates all rows with the specified column values.
 func (o CircleMemberSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
 	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
-// UpdateAllGP updates all rows with the specified column values, and panics on error.
-func (o CircleMemberSlice) UpdateAllGP(ctx context.Context, cols M) int64 {
-	rowsAff, err := o.UpdateAll(ctx, boil.GetContextDB(), cols)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return rowsAff
-}
-
-// UpdateAllP updates all rows with the specified column values, and panics on error.
-func (o CircleMemberSlice) UpdateAllP(ctx context.Context, exec boil.ContextExecutor, cols M) int64 {
-	rowsAff, err := o.UpdateAll(ctx, exec, cols)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return rowsAff
 }
 
 // UpdateAll updates all rows with the specified column values, using an executor.
@@ -1286,21 +1078,6 @@ func (o CircleMemberSlice) UpdateAll(ctx context.Context, exec boil.ContextExecu
 // UpsertG attempts an insert, and does an update or ignore on conflict.
 func (o *CircleMember) UpsertG(ctx context.Context, updateColumns, insertColumns boil.Columns) error {
 	return o.Upsert(ctx, boil.GetContextDB(), updateColumns, insertColumns)
-}
-
-// UpsertGP attempts an insert, and does an update or ignore on conflict. Panics on error.
-func (o *CircleMember) UpsertGP(ctx context.Context, updateColumns, insertColumns boil.Columns) {
-	if err := o.Upsert(ctx, boil.GetContextDB(), updateColumns, insertColumns); err != nil {
-		panic(boil.WrapErr(err))
-	}
-}
-
-// UpsertP attempts an insert using an executor, and does an update or ignore on conflict.
-// UpsertP panics on error.
-func (o *CircleMember) UpsertP(ctx context.Context, exec boil.ContextExecutor, updateColumns, insertColumns boil.Columns) {
-	if err := o.Upsert(ctx, exec, updateColumns, insertColumns); err != nil {
-		panic(boil.WrapErr(err))
-	}
 }
 
 var mySQLCircleMemberUniqueColumns = []string{
@@ -1465,30 +1242,6 @@ func (o *CircleMember) DeleteG(ctx context.Context, hardDelete bool) (int64, err
 	return o.Delete(ctx, boil.GetContextDB(), hardDelete)
 }
 
-// DeleteP deletes a single CircleMember record with an executor.
-// DeleteP will match against the primary key column to find the record to delete.
-// Panics on error.
-func (o *CircleMember) DeleteP(ctx context.Context, exec boil.ContextExecutor, hardDelete bool) int64 {
-	rowsAff, err := o.Delete(ctx, exec, hardDelete)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return rowsAff
-}
-
-// DeleteGP deletes a single CircleMember record.
-// DeleteGP will match against the primary key column to find the record to delete.
-// Panics on error.
-func (o *CircleMember) DeleteGP(ctx context.Context, hardDelete bool) int64 {
-	rowsAff, err := o.Delete(ctx, boil.GetContextDB(), hardDelete)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return rowsAff
-}
-
 // Delete deletes a single CircleMember record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *CircleMember) Delete(ctx context.Context, exec boil.ContextExecutor, hardDelete bool) (int64, error) {
@@ -1547,16 +1300,6 @@ func (q circleMemberQuery) DeleteAllG(ctx context.Context, hardDelete bool) (int
 	return q.DeleteAll(ctx, boil.GetContextDB(), hardDelete)
 }
 
-// DeleteAllP deletes all rows, and panics on error.
-func (q circleMemberQuery) DeleteAllP(ctx context.Context, exec boil.ContextExecutor, hardDelete bool) int64 {
-	rowsAff, err := q.DeleteAll(ctx, exec, hardDelete)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return rowsAff
-}
-
 // DeleteAll deletes all matching rows.
 func (q circleMemberQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor, hardDelete bool) (int64, error) {
 	if q.Query == nil {
@@ -1586,26 +1329,6 @@ func (q circleMemberQuery) DeleteAll(ctx context.Context, exec boil.ContextExecu
 // DeleteAllG deletes all rows in the slice.
 func (o CircleMemberSlice) DeleteAllG(ctx context.Context, hardDelete bool) (int64, error) {
 	return o.DeleteAll(ctx, boil.GetContextDB(), hardDelete)
-}
-
-// DeleteAllP deletes all rows in the slice, using an executor, and panics on error.
-func (o CircleMemberSlice) DeleteAllP(ctx context.Context, exec boil.ContextExecutor, hardDelete bool) int64 {
-	rowsAff, err := o.DeleteAll(ctx, exec, hardDelete)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return rowsAff
-}
-
-// DeleteAllGP deletes all rows in the slice, and panics on error.
-func (o CircleMemberSlice) DeleteAllGP(ctx context.Context, hardDelete bool) int64 {
-	rowsAff, err := o.DeleteAll(ctx, boil.GetContextDB(), hardDelete)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return rowsAff
 }
 
 // DeleteAll deletes all rows in the slice, using an executor.
@@ -1683,20 +1406,6 @@ func (o *CircleMember) ReloadG(ctx context.Context) error {
 	return o.Reload(ctx, boil.GetContextDB())
 }
 
-// ReloadP refetches the object from the database with an executor. Panics on error.
-func (o *CircleMember) ReloadP(ctx context.Context, exec boil.ContextExecutor) {
-	if err := o.Reload(ctx, exec); err != nil {
-		panic(boil.WrapErr(err))
-	}
-}
-
-// ReloadGP refetches the object from the database and panics on error.
-func (o *CircleMember) ReloadGP(ctx context.Context) {
-	if err := o.Reload(ctx, boil.GetContextDB()); err != nil {
-		panic(boil.WrapErr(err))
-	}
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *CircleMember) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1717,24 +1426,6 @@ func (o *CircleMemberSlice) ReloadAllG(ctx context.Context) error {
 	}
 
 	return o.ReloadAll(ctx, boil.GetContextDB())
-}
-
-// ReloadAllP refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-// Panics on error.
-func (o *CircleMemberSlice) ReloadAllP(ctx context.Context, exec boil.ContextExecutor) {
-	if err := o.ReloadAll(ctx, exec); err != nil {
-		panic(boil.WrapErr(err))
-	}
-}
-
-// ReloadAllGP refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-// Panics on error.
-func (o *CircleMemberSlice) ReloadAllGP(ctx context.Context) {
-	if err := o.ReloadAll(ctx, boil.GetContextDB()); err != nil {
-		panic(boil.WrapErr(err))
-	}
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1770,26 +1461,6 @@ func (o *CircleMemberSlice) ReloadAll(ctx context.Context, exec boil.ContextExec
 // CircleMemberExistsG checks if the CircleMember row exists.
 func CircleMemberExistsG(ctx context.Context, iD int) (bool, error) {
 	return CircleMemberExists(ctx, boil.GetContextDB(), iD)
-}
-
-// CircleMemberExistsP checks if the CircleMember row exists. Panics on error.
-func CircleMemberExistsP(ctx context.Context, exec boil.ContextExecutor, iD int) bool {
-	e, err := CircleMemberExists(ctx, exec, iD)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return e
-}
-
-// CircleMemberExistsGP checks if the CircleMember row exists. Panics on error.
-func CircleMemberExistsGP(ctx context.Context, iD int) bool {
-	e, err := CircleMemberExists(ctx, boil.GetContextDB(), iD)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return e
 }
 
 // CircleMemberExists checks if the CircleMember row exists.
