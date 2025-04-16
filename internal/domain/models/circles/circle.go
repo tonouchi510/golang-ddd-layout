@@ -3,31 +3,31 @@ package circles
 import (
 	"fmt"
 
-	"github.com/tonouchi510/golang-ddd-layout/internal/domain/models/users"
+	"github.com/tonouchi510/golang-ddd-layout/internal/domain/shared"
 )
 
 type Circle struct {
-	Id      CircleId // idの公開はアリ
-	name    CircleName
-	ownerId users.UserId
-	members []users.UserId
+	Id        CircleId // idの公開はアリ
+	name      CircleName
+	ownerId   shared.UserId
+	memberIds []shared.UserId
 }
 
-func NewCircle(id CircleId, name CircleName, ownerId users.UserId, members []users.UserId) (*Circle, error) {
+func NewCircle(id CircleId, name CircleName, ownerId shared.UserId, memberIds []shared.UserId) (*Circle, error) {
 	circle := Circle{
-		Id:      id,
-		name:    name,
-		ownerId: ownerId,
-		members: members,
+		Id:        id,
+		name:      name,
+		ownerId:   ownerId,
+		memberIds: members,
 	}
 	return &circle, nil
 }
 
-func (c *Circle) Join(memberId users.UserId) error {
+func (c *Circle) Join(memberId shared.UserId) error {
 	if c.IsFull() {
 		return fmt.Errorf("CircleFullError: %s", c.Id)
 	}
-	c.members = append(c.members, memberId)
+	c.memberIds = append(c.memberIds, memberId)
 	return nil
 }
 
@@ -36,13 +36,13 @@ func (c Circle) IsFull() bool {
 }
 
 func (c Circle) CountMembers() int {
-	return len(c.members) + 1 // ownerユーザ分を足している
+	return len(c.memberIds) + 1 // ownerユーザ分を足している
 }
 
 func (c Circle) Notify(note ICircleNotification) error {
 	note.SetId(c.Id)
 	note.SetName(c.name)
 	note.SetOwnerId(c.ownerId)
-	note.SetMembers(c.members)
+	note.SetMemberIds(c.memberIds)
 	return nil
 }

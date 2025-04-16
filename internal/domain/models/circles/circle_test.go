@@ -7,30 +7,30 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"github.com/tonouchi510/golang-ddd-layout/internal/domain/models/users"
+	"github.com/tonouchi510/golang-ddd-layout/internal/domain/shared"
 )
 
 type CircleTestSuite struct {
 	suite.Suite
-	ownerId users.UserId
+	ownerId shared.UserId
 	name    CircleName
-	userId1 users.UserId
-	userId2 users.UserId
+	userId1 shared.UserId
+	userId2 shared.UserId
 }
 
-func createCircleWith29Members(ownerId users.UserId, name CircleName) *Circle {
+func createCircleWith29Members(ownerId shared.UserId, name CircleName) *Circle {
 	id, err := uuid.NewRandom()
 	if err != nil {
 		panic(err)
 	}
 	circleId := CircleId(id.String())
-	members := []users.UserId{}
+	members := []shared.UserId{}
 	for i := 0; i < 28; i++ {
 		id, err := uuid.NewRandom()
 		if err != nil {
 			panic(err)
 		}
-		userId := users.UserId(id.String())
+		userId := shared.UserId(id.String())
 		members = append(members, userId)
 	}
 	circle, err := NewCircle(circleId, name, ownerId, members)
@@ -49,7 +49,7 @@ func (s *CircleTestSuite) SetupSuite() {
 	if err != nil {
 		panic(err)
 	}
-	s.ownerId, err = users.NewUserId(id.String())
+	s.ownerId, err = shared.NewUserId(id.String())
 	if err != nil {
 		panic(err)
 	}
@@ -59,12 +59,12 @@ func (s *CircleTestSuite) SetupSuite() {
 	if err != nil {
 		panic(err)
 	}
-	s.userId1 = users.UserId(id.String())
+	s.userId1 = shared.UserId(id.String())
 	id, err = uuid.NewRandom()
 	if err != nil {
 		panic(err)
 	}
-	s.userId2 = users.UserId(id.String())
+	s.userId2 = shared.UserId(id.String())
 }
 
 func (s *CircleTestSuite) TearDownSuite() {
