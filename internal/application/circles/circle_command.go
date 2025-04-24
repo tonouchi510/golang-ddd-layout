@@ -25,3 +25,7 @@ func NewCircleJoinCommand(userId string, circleId string) (CircleJoinCommand, er
 	}
 	return c, nil
 }
+
+type CircleGetCommand struct {
+	CircleId string
+}

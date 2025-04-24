@@ -6,11 +6,13 @@ import (
 
 	"github.com/tonouchi510/golang-ddd-layout/internal/domain/models/circles"
 	"github.com/tonouchi510/golang-ddd-layout/internal/domain/models/users"
-	"github.com/volatiletech/sqlboiler/boil"
+	"github.com/tonouchi510/golang-ddd-layout/internal/domain/shared"
+	"github.com/volatiletech/sqlboiler/v4/boil"
 )
 
 type ICircleApplicationService interface {
 	Create(command CircleCreateCommand) error
+	Join(command CircleJoinCommand) error
 }
 
 // 実装側はprivateに
@@ -46,7 +48,7 @@ func (s circleApplicationService) Create(command CircleCreateCommand) error {
 		return err
 	}
 
-	ownerId, err := users.NewUserId(command.UserId)
+	ownerId, err := shared.NewUserId(command.UserId)
 	if err != nil {
 		return err
 	}
@@ -81,7 +83,7 @@ func (s circleApplicationService) Join(command CircleJoinCommand) error {
 		return err
 	}
 
-	memberId, err := users.NewUserId(command.UserId)
+	memberId, err := shared.NewUserId(command.UserId)
 	if err != nil {
 		return err
 	}
@@ -104,4 +106,43 @@ func (s circleApplicationService) Join(command CircleJoinCommand) error {
 	}
 	err = tx.Commit()
 	return err
+}
+
+// domainモデルを介した非効率なQuery例
+func (s circleApplicationService) Get(command CircleGetCommand) (*CircleGetResponse, error) {
+	id, err := circles.NewID(command.CircleId)
+	if err != nil {
+		return nil, err
+	}
+	circle, err := s.circleRepo.Find(id)
+	if err != nil {
+		return nil, err
+	}
+	owner, err := s.userRepoitory.Find(circle.OwnerId)
+	if err != nil {
+		return nil, err
+	}
+
+	// ここでN+1が発生する
+	MemberList := []UserResponse{}
+	for _, memberId := range circle.MemberIds() {
+		user, err := s.userRepoitory.Find(memberId)
+		if err != nil {
+			return nil, err
+		}
+		userResponse := UserResponse{
+			Id:   string(user.Id),
+			Name: string(user.Name),
+		}
+		MemberList = append(MemberList, userResponse)
+	}
+
+	response := CircleGetResponse{
+		Id:        string(circle.Id),
+		Name:      string(circle.Name),
+		OwnerId:   string(circle.OwnerId),
+		OwnerName: string(owner.Name),
+		Members:   MemberList,
+	}
+	return &response, nil
 }
