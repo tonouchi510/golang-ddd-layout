@@ -1,5 +1,8 @@
 # golang-ddd-layout
-GolangでDDD実践するときのプロジェクトレイアウトとサンプルコード
+GolangでDDD実践するときのプロジェクトレイアウトとサンプルコード（WIP）
+
+※2025/05追記：こちらのリポジトリはかなり古く良くない実装も多いので、こちらを参照してください（最新版）  
+=> https://github.com/tonouchi510/application-arch-blueprint
 
 ## 参照
 - [golang-standards/project-layout](https://github.com/golang-standards/project-layout)
